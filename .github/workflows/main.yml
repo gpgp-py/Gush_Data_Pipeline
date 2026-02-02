@@ -1,27 +1,20 @@
-name: Monthly Data Refresh
-on:
-  schedule:
-    - cron: '0 0 1 * *' # ירוץ ב-1 לכל חודש
-  workflow_dispatch: # מאפשר לך להריץ ידנית עכשיו
+- name: Set up Python
+    uses: actions/setup-python@v4
+    with:
+      python-version: '3.9'
 
-jobs:
-  update-data:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.9'
-      - name: Install dependencies
-        run: pip install requests pandas
-      - name: Run Fetcher
-        run: python update_data.py
-      - name: Commit and Push changes
-        run: |
-          git config --global user.name 'DataBot'
-          git config --global user.email 'bot@data.com'
-          git add tlv_deals_master.csv
-          git commit -m "Update TLV Real Estate Data" || echo "No changes to commit"
-          git push
+  - name: Install dependencies
+    run: |
+      python -m pip install --upgrade pip
+      pip install requests pandas
+
+  - name: Run Fetcher
+    run: python update_data.py
+
+  - name: Commit and Push changes
+    run: |
+      git config --global user.name 'DataBot'
+      git config --global user.email 'bot@data.com'
+      git add tlv_deals_master.csv
+      git commit -m "Update TLV Real Estate Data" || echo "No changes to commit"
+      git push
