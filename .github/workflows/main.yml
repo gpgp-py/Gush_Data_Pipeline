@@ -2,18 +2,17 @@ name: Monthly Data Refresh
 
 on:
   schedule:
-    - cron: '0 0 1 * *' # רץ אוטומטית ב-1 לכל חודש
-  workflow_dispatch:      # מאפשר הרצה ידנית בלחיצת כפתור
+    - cron: '0 0 1 * *'
+  workflow_dispatch:
 
 permissions:
-  contents: write         # קריטי! מאפשר לבוט לשמור את הקובץ בתיקייה
+  contents: write
 
 jobs:
   update-data:
     runs-on: ubuntu-latest
-    
     steps:
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v3
 
       - name: Set up Python
@@ -26,13 +25,13 @@ jobs:
           python -m pip install --upgrade pip
           pip install requests pandas
 
-      - name: Run Fetcher Script
+      - name: Run Fetcher
         run: python update_data.py
 
-      - name: Commit and Push changes
+      - name: Commit and Push
         run: |
           git config --global user.name 'DataBot'
           git config --global user.email 'bot@data.com'
           git add tlv_deals_master.csv
-          git commit -m "Auto-update: Real Estate Data" || echo "No changes to commit"
+          git commit -m "Update Data" || echo "No changes"
           git push
